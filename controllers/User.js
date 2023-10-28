@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const User = mongoose.model("User");
+const Job = mongoose.model("Job");
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const yourPassword = "someRandomPasswordHere";
@@ -119,7 +120,65 @@ const updateUser = async (req, res) => {
   }
 };
 
+const unsaveJob = async (req, res) => {
+
+  const userId = req.params.userId;
+  const jobId = req.params.jobId;
+
+  try {
+    // Find the user by ID and update the savedJobs array
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Add the jobId to the savedJobs array if it doesn't exist
+    if (user.savedJobs.includes(jobId)) {
+      user.savedJobs.pull(jobId);
+      await user.save();
+
+      return res.status(201).json({ message: 'Job unsaved successfully' });
+    }
+
+    return res.status(201).json({ message: 'Job is already deleted' });
+  } catch (error) {
+    console.error('Error saving job:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+
+}
+
+const saveJob = async (req, res) => {
+
+  const userId = req.params.userId;
+  const jobId = req.params.jobId;
+
+  try {
+    // Find the user by ID and update the savedJobs array
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Add the jobId to the savedJobs array if it doesn't exist
+    if (!user.savedJobs.includes(jobId)) {
+      user.savedJobs.push(jobId);
+      await user.save();
+
+      return res.status(201).json({ message: 'Job saved successfully' });
+    }
+
+    return res.status(201).json({ message: 'Job is already saved' });
+  } catch (error) {
+    console.error('Error saving job:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+
+}
 
 
 
-module.exports = { getUsers, signupUser, loginUser, getUser, updateUser }
+
+module.exports = { getUsers, signupUser, loginUser, getUser, updateUser,saveJob, unsaveJob }
