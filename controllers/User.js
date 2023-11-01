@@ -6,6 +6,7 @@ const saltRounds = 10;
 const yourPassword = "someRandomPasswordHere";
 const jwt = require("jsonwebtoken")
 
+
 const createToken = (_id) => {
   return jwt.sign({_id}, process.env.SECRET, {expiresIn: '1d'})
 }
@@ -100,13 +101,21 @@ const getUser = async (req, res) => {
 const updateUser = async (req, res) => {
   const userId = req.params.userId;
    
-    const updatedData = req.body;
+  const updatedData = req.body;
+  console.log(updatedData)
 
   try {
+    // updatedData.image = req.file.path;
+    // console.log(updatedData)
+     
     const user = await User.findById(userId);
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
+    }
+    
+    if (req.file) {
+      updatedData.image = req.file.path;
     }
 
     // Update the education data
@@ -148,26 +157,22 @@ const unsaveJob = async (req, res) => {
   }
 
 }
-
 const saveJob = async (req, res) => {
-
   const userId = req.params.userId;
   const jobId = req.params.jobId;
 
   try {
-    // Find the user by ID and update the savedJobs array
     const user = await User.findById(userId);
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Add the jobId to the savedJobs array if it doesn't exist
     if (!user.savedJobs.includes(jobId)) {
-      user.savedJobs.push(jobId);
+      user.savedJobs.push(jobId); // Push the job ObjectId, not the job object itself
       await user.save();
 
-      return res.status(201).json({ message: 'Job saved successfully' });
+      return res.status(201).json({ message: 'Job saved successfully', user });
     }
 
     return res.status(201).json({ message: 'Job is already saved' });
@@ -175,8 +180,9 @@ const saveJob = async (req, res) => {
     console.error('Error saving job:', error);
     return res.status(500).json({ message: 'Internal server error' });
   }
+};
 
-}
+
 
 
 

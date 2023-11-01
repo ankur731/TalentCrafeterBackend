@@ -5,7 +5,7 @@ const getJobs = async (req, res) => {
   try {
     const jobs = await Job.find().sort({ postedAt: -1 }); // Fetch all jobs from the database
     const { experienceLevel, location, jobType } = req.query;
-    console.log(jobType);
+    // console.log(jobType);
     let filteredJobs = jobs;
 
     if (experienceLevel) {

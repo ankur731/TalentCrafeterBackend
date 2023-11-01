@@ -1,6 +1,10 @@
 const express = require("express")
 const mongoose = require("mongoose");
+const multer = require("multer")
 const cors = require('cors');
+const upload = require("./middleware/FileUpload")
+const path = require('path'); // Node.js path module for working with file paths
+
 require('dotenv').config()
 const uri = process.env.DB_HOST
 const Port = process.env.PORT
@@ -21,17 +25,22 @@ const connectDB = async () => {
   
 connectDB();
 
+
+
 require("./models/Job")
 require("./models/User")
 require("./models/Education")
+require("./models/Experience")
 
 
 app.use(cors());
 app.use(express.json());
+app.use("/uploads", express.static('uploads'))
 
 app.use(require("./routes/Job"));
 app.use(require("./routes/User"));
 app.use(require("./routes/Education"));
+app.use(require("./routes/Experience"));
 
 // app.get("/", (req, res) => {
 //     res.send("Hello world")
