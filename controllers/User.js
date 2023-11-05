@@ -38,11 +38,11 @@ const signupUser = async (req, res) => {
 
   await newUser.save()
   const token = createToken(newUser._id);
-  const id = newUser._id;
+  const _id = newUser._id;
   console.log("User created successfully")
 
   // You can generate and send an authentication token here for the new user
-  res.status(201).json({ message: 'Signup successful',id, email, token });
+  res.status(201).json({ message: 'Signup successful',_id, email, token });
 }
 
 
@@ -64,12 +64,12 @@ const loginUser = async (req, res) => {
   }
 
   const token = createToken(user._id);
-  const id = user._id;
+  const _id = user._id;
   console.log("login created successfully")
-
+ 
   // Password is correct; the user is authenticated
   // You can generate and send a token for authentication here
-  res.status(201).json({ message: 'Login successful', id, email , token });
+  res.status(201).json({ message: 'Login successful', _id, email , token });
 }
 
 
